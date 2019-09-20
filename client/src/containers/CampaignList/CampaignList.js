@@ -6,7 +6,9 @@ import Campaign from "./../../components/Campaign/Campaign";
 
 import request from "superagent";
 
-class CampaignEdit extends React.Component {
+class CampaignList extends React.Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props);
 
@@ -16,9 +18,16 @@ class CampaignEdit extends React.Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        this._isMounted = true;
+
         this.getCampaigns()
     }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
 
     getCampaigns() {
         this.setState({loading: true}, () => {
@@ -39,34 +48,42 @@ class CampaignEdit extends React.Component {
     }
 
     render() {
+        var pageContent = ''
+
         if (this.state.loading) {
-            return (
-                <div className="container" style={{padding: "100px 0"}}>
+            pageContent = (
+                <div className="container is-text-center" style={{padding: "100px 20px"}}>
                     <p>Loading...</p>
+                </div>
+            )
+        } else {
+            pageContent = (
+                <div>
+                    {this.state.campaigns.map(campaign => (
+                        <Campaign key={campaign.id} campaign={campaign}/>
+                    ))}
                 </div>
             )
         }
 
         return (
-            <div className="container" style={{padding: "100px 0"}}>
+            <div className="container" style={{padding: "100px 20px"}}>
                 <div className="page-header is-row">
                     <div className="is-col">
                         <h1>Campaigns</h1>
                         <p>Find below the list of all active campaigns.</p>
                     </div>
                     <div className="is-col is-text-right">
-                        <NavLink to={{pathname: "/campaign/new"}} className="button">Add campaign</NavLink>
+                        <NavLink to={{pathname: "/campaign/new"}} className="button add-campaign">Add campaign</NavLink>
                     </div>
                 </div>
 
                 <div className="page-content">
-                    {this.state.campaigns.map(campaign => (
-                        <Campaign campaign={campaign}/>
-                    ))}
+                    {pageContent}
                 </div>
             </div>
         );
     }
 }
 
-export default CampaignEdit;
+export default CampaignList;

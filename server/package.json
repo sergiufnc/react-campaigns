@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest test --env=node",
     "start": "node ./app.js"
   },
   "repository": {
@@ -19,18 +19,27 @@
   "homepage": "https://github.com/serfnc/simple-auth#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "chai": "^4.2.0",
     "cookie-parser": "^1.4.4",
     "dotenv": "^6.1.0",
     "express": "^4.17.1",
     "knex": "^0.19.3",
-    "mocha": "^6.2.0",
     "moment": "^2.24.0",
     "request-promise": "^4.2.4",
     "sqlite3": "^4.1.0",
     "webpack": "^4.40.2"
   },
+  "jest": {
+    "verbose": true,
+    "testPathDirs": [
+      "./test"
+    ],
+    "testRegex": "\\.(js|jsx)$"
+  },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "jest": "^24.9.0",
+    "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
     "nodemon": "^1.19.2",
     "sass-loader": "^8.0.0"

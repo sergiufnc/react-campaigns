@@ -35,10 +35,11 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get('/api', async (req, res) => {
+app.get('/api/test', async (req, res) => {
     var result = await request({
         headers: {
-            'Authorization': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
+            'Token': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
+            'Key': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
             'API-Key': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
             'X-API-Key': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3'
         },
@@ -53,18 +54,38 @@ app.get('/api', async (req, res) => {
     })
 });
 
-app.all('/api/add-campaign', async (req, res) => {
-    var campaign = req.body.campaign
+app.post('/api/save-campaign', async (req, res) => {
+    var campaign = req.body.campaign,
+        campaignId
 
-    var campaignInsert = await knex('campaigns').insert({
+    if (
+        !campaign.name ||
+        !campaign.startDate || campaign.startDate === 'Invalid date' ||
+        !campaign.endDate || campaign.endDate === 'Invalid date' ||
+        !campaign.targetImpressions
+    ) {
+        return res.status(400).json('Please fill our all the required fields.')
+    }
+
+    var data = {
         name: campaign.name,
         startDate: moment(campaign.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
         endDate: moment(campaign.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
         targetImpressions: campaign.targetImpressions
-    })
+    }
+
+    if (campaign.id) {
+        await knex('campaigns').where('id', campaign.id).update(data)
+
+        campaignId = campaign.id
+    } else {
+        var campaignInsert = await knex('campaigns').insert(data)
+
+        campaignId = campaignInsert[0]
+    }
 
     return res.json({
-        id: campaignInsert[0]
+        id: campaignId
     })
 });
 
@@ -76,7 +97,7 @@ app.get('/api/get-campaigns', async (req, res) => {
     })
 });
 
-app.get('/api/get-campaign/{id}', async (req, res) => {
+app.get('/api/get-campaign/:id', async (req, res) => {
     var campaign = await knex('campaigns').where('id', req.params.id).first()
 
     return res.json({

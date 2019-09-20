@@ -6,8 +6,8 @@ import style from './Header.scss';
 const Header = () => (
     <header className="header">
         <a href="/">
-            <span>Ad Campaigns</span>
-            <img alt="Ad Campaigns" src={logo} />
+            <span>Campaigns</span>
+            <img alt="Campaigns" src={logo} />
         </a>
     </header>
 );

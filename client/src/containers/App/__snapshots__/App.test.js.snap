@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches the snapshot 1`] = `
+<div>
+  <header
+    className="header"
+  >
+    <a
+      href="/"
+    >
+      <span>
+        Campaigns
+      </span>
+      <img
+        alt="Campaigns"
+        src="logo.svg"
+      />
+    </a>
+  </header>
+  <div
+    className="container"
+    style={
+      Object {
+        "padding": "100px 20px",
+      }
+    }
+  >
+    <div
+      className="page-header is-row"
+    >
+      <div
+        className="is-col"
+      >
+        <h1>
+          Campaigns
+        </h1>
+        <p>
+          Find below the list of all active campaigns.
+        </p>
+      </div>
+      <div
+        className="is-col is-text-right"
+      >
+        <a
+          aria-current={null}
+          className="button add-campaign"
+          href="/campaign/new"
+          onClick={[Function]}
+        >
+          Add campaign
+        </a>
+      </div>
+    </div>
+    <div
+      className="page-content"
+    >
+      <div
+        className="container"
+        style={
+          Object {
+            "padding": "100px 20px",
+          }
+        }
+      >
+        <p>
+          Loading...
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

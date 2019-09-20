@@ -10,6 +10,7 @@ class Campaign extends React.Component {
 
 
     render() {
+
         var campaign = this.props.campaign
 
         return (
@@ -20,7 +21,7 @@ class Campaign extends React.Component {
 
                 <div className="campaign-details">
                     <div className="campaign-title">{campaign.name}</div>
-                    <div className="campaign-dates">{dateFormatter(new Date(campaign.startDate))} - {dateFormatter(new Date(campaign.endDate))} &nbsp;&nbsp;•&nbsp;&nbsp; Target {numberFormatter(campaign.targetImpressions)}</div>
+                    <div className="campaign-dates"><span className="start-date">{dateFormatter(new Date(campaign.startDate))}</span> - <span className="end-date">{dateFormatter(new Date(campaign.endDate))}</span> • Target <span className="target-impressions">{numberFormatter(campaign.targetImpressions)}</span></div>
                 </div>
             </NavLink>
         )

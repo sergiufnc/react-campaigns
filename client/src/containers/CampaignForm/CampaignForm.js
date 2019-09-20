@@ -3,19 +3,21 @@ import React from "react";
 import {Route, BrowserRouter as Router, Switch, NavLink} from "react-router-dom";
 
 import request from "superagent";
-import Campaign from "../../components/Campaign/Campaign";
 
+import moment from 'moment';
 import Cleave from 'cleave.js/react';
 
 
 class CampaignForm extends React.Component {
+    _isMounted = false;
+
     constructor(props) {
         super(props);
 
         this.state = {
             loading: false,
-            id: props.match.id,
-            campaign: props.location.campaign ? props.location.campaign : {
+            id: props.match && props.match.params && props.match.params.id ? props.match.params.id : null,
+            campaign: props.location && props.location.campaign ? props.location.campaign : {
                 id: '',
                 name: '',
                 startDate: '',
@@ -25,11 +27,34 @@ class CampaignForm extends React.Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        this._isMounted = true;
+
         if (this.state.id && !this.state.campaign.id) {
             this.setState({loading: true}, () => {
                 this.getCampaign()
             })
+        } else if (this.state.campaign) {
+            this.repairCampaign()
+        }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+
+    repairCampaign() {
+        var currentCampaign = this.state.campaign
+
+        if (this.state.campaign.startDate) {
+            currentCampaign.startDate = moment(currentCampaign.startDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+            this.setState({campaign: currentCampaign})
+        }
+
+        if (this.state.campaign.endDate) {
+            currentCampaign.endDate = moment(currentCampaign.endDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+            this.setState({campaign: currentCampaign})
         }
     }
 
@@ -40,10 +65,13 @@ class CampaignForm extends React.Component {
                 .then((results) => {
                     this.setState({
                         loading: false,
-                        campaign: results.campaign
+                        campaign: results.body.campaign
                     })
+                    this.repairCampaign()
                 })
                 .catch((err) => {
+                    //console.log(err)
+
                     this.setState({
                         loading: false,
                     });
@@ -55,7 +83,7 @@ class CampaignForm extends React.Component {
         e.preventDefault()
 
         request
-            .post('http://localhost:8000/api/add-campaign')
+            .post('http://localhost:8000/api/save-campaign')
             .send({campaign: this.state.campaign})
             .set('Content-Type', 'application/x-www-form-urlencoded')
             .set('Accept', 'application/json')
@@ -63,7 +91,11 @@ class CampaignForm extends React.Component {
                 this.props.history.push('/')
             })
             .catch((err) => {
-                alert(err)
+                if (err.response && err.response.body) {
+                    alert(err.response.body)
+                } else {
+                    alert(err)
+                }
             })
     }
 
@@ -98,17 +130,17 @@ class CampaignForm extends React.Component {
     render() {
         if (this.state.loading) {
             return (
-                <div className="container" style={{padding: "100px 0"}}>
+                <div className="container is-text-center" style={{padding: "100px 20px"}}>
                     <p>Loading...</p>
                 </div>
             )
         }
 
         return (
-            <div className="container" style={{padding: "100px 0"}}>
+            <div className="container" style={{padding: "100px 20px"}}>
                 <div className="is-50 is-center">
                     <div className="page-header">
-                        <h1>{this.state.campaign.id ? 'Edit campaign' : 'New campaign'}</h1>
+                        <h1>{this.state.id ? 'Edit campaign' : 'New campaign'}</h1>
                         <p>Add the campaign details.</p>
                     </div>
 
@@ -135,7 +167,7 @@ class CampaignForm extends React.Component {
                             </div>
 
                             <div className="form-item is-buttons">
-                                <button className="button">Add campaign</button>
+                                <button className="button">{this.state.campaign.id ? 'Update campaign' : 'Add campaign'}</button>
                                 <button onClick={this.handleCancel.bind(this)} className="button is-tertiary">Cancel</button>
                             </div>
 
