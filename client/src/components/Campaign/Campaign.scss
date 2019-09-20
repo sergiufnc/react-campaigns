@@ -1,0 +1,56 @@
+@import './../../sass/vars';
+
+.campaign {
+  border-radius: 7px;
+  background: #fff;
+  position: relative;
+  display: table;
+  width: 100%;
+  color: $color-text;
+  text-decoration: none;
+  overflow: hidden;
+  margin: 15px 0 20px 0;
+
+  &:hover {
+    color: $color-text;
+    opacity: 0.8;
+  }
+
+  & > * {
+    display: table-cell;
+    position: relative;
+  }
+
+  .campaign-icon {
+    width: 100px;
+    background: #20253f;
+
+    span {
+      font-weight: 900;
+      font-size: 20px;
+      color: #fff;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      text-align: center;
+      height: 30px;
+      display: block;
+    }
+  }
+
+  .campaign-details {
+    padding: 20px;
+
+    .campaign-title {
+      font-weight: 600;
+    }
+
+    .campaign-dates {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+}
