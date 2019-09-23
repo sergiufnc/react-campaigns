@@ -19,7 +19,6 @@ class CampaignForm extends React.Component {
             id: props.match && props.match.params && props.match.params.id ? props.match.params.id : null,
             campaign: props.location && props.location.campaign ? props.location.campaign : {
                 id: '',
-                name: '',
                 startDate: '',
                 endDate: '',
                 targetImpressions: ''
@@ -48,12 +47,12 @@ class CampaignForm extends React.Component {
         var currentCampaign = this.state.campaign
 
         if (this.state.campaign.startDate) {
-            currentCampaign.startDate = moment(currentCampaign.startDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+            currentCampaign.startDate = moment(currentCampaign.startDate).format('DD/MM/YYYY')
             this.setState({campaign: currentCampaign})
         }
 
         if (this.state.campaign.endDate) {
-            currentCampaign.endDate = moment(currentCampaign.endDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+            currentCampaign.endDate = moment(currentCampaign.endDate).format('DD/MM/YYYY')
             this.setState({campaign: currentCampaign})
         }
     }
@@ -87,7 +86,8 @@ class CampaignForm extends React.Component {
             .send({campaign: this.state.campaign})
             .set('Content-Type', 'application/x-www-form-urlencoded')
             .set('Accept', 'application/json')
-            .then((results) => {
+            .then((result) => {
+                console.log(result)
                 this.props.history.push('/')
             })
             .catch((err) => {
@@ -101,12 +101,6 @@ class CampaignForm extends React.Component {
 
     handleCancel(e) {
         this.props.history.push('/')
-    }
-
-    handleNameChange(e) {
-        var newCampaign = this.state.campaign
-        newCampaign.name = e.target.value
-        this.setState({campaign: newCampaign})
     }
 
     handleStartDateChange(e) {
@@ -147,11 +141,6 @@ class CampaignForm extends React.Component {
                     <div className="page-content">
                         <form method="post" onSubmit={this.handleSubmit.bind(this)} action="">
                             <div className="form-item">
-                                <label>Name</label>
-                                <input type="text" name="name" value={this.state.campaign.name} placeholder="Nike - Autumn Campaign" onChange={this.handleNameChange.bind(this)} className=""/>
-                            </div>
-
-                            <div className="form-item">
                                 <label>Start date</label>
                                 <Cleave options={{date: true, delimiter: '/', datePattern: ['d', 'm', 'Y']}} placeholder="dd/mm/yyyy" type="text" name="startDate" value={this.state.campaign.startDate} onChange={this.handleStartDateChange.bind(this)} className=""/>
                             </div>
@@ -167,7 +156,9 @@ class CampaignForm extends React.Component {
                             </div>
 
                             <div className="form-item is-buttons">
-                                <button className="button">{this.state.campaign.id ? 'Update campaign' : 'Add campaign'}</button>
+                                {!this.state.id &&
+                                    <button className="button">{this.state.campaign.id ? 'Update campaign' : 'Add campaign'}</button>
+                                }
                                 <button onClick={this.handleCancel.bind(this)} className="button is-tertiary">Cancel</button>
                             </div>
 

@@ -16,11 +16,11 @@ class Campaign extends React.Component {
         return (
             <NavLink to={{ pathname: "/campaign/" + campaign.id, campaign: campaign }} className="campaign">
                 <div className="campaign-icon">
-                    <span>{campaign.name[0]}</span>
+                    <span>{campaign.id[0]}</span>
                 </div>
 
                 <div className="campaign-details">
-                    <div className="campaign-title">{campaign.name}</div>
+                    <div className="campaign-title">{campaign.id}</div>
                     <div className="campaign-dates"><span className="start-date">{dateFormatter(new Date(campaign.startDate))}</span> - <span className="end-date">{dateFormatter(new Date(campaign.endDate))}</span> • Target <span className="target-impressions">{numberFormatter(campaign.targetImpressions)}</span></div>
                 </div>
             </NavLink>

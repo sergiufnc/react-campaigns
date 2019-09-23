@@ -55,7 +55,7 @@ exports[`matches the snapshot 1`] = `
       className="page-content"
     >
       <div
-        className="container"
+        className="container is-text-center"
         style={
           Object {
             "padding": "100px 20px",

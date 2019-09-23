@@ -7,8 +7,11 @@ const request = require('request-promise')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const moment = require('moment')
+const uniqid = require('uniqid');
 
 const app = express()
+
+const API_KEY = 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3'
 
 app.use(cookieParser());
 
@@ -38,28 +41,21 @@ app.use(function (req, res, next) {
 app.get('/api/test', async (req, res) => {
     var result = await request({
         headers: {
-            'Token': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
-            'Key': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
-            'API-Key': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3',
-            'X-API-Key': 'cvR6HzKV6pp8vvIYNAbE3ZagbE9h9Fo4mygV0Yy3'
+            'x-api-key': API_KEY,
         },
-        uri: 'https://esobbc6302.execute-api.eu-west-1.amazonaws.com/default',
+        uri: 'https://esobbc6302.execute-api.eu-west-1.amazonaws.com/default/campaigns/5d726ac54dab6921b69addcc',
         method: 'GET'
     });
 
-    console.log(result)
+    //console.log(result)
 
-    return res.json({
-        ok: true
-    })
+    return res.json(result)
 });
 
 app.post('/api/save-campaign', async (req, res) => {
-    var campaign = req.body.campaign,
-        campaignId
+    var campaign = req.body.campaign
 
     if (
-        !campaign.name ||
         !campaign.startDate || campaign.startDate === 'Invalid date' ||
         !campaign.endDate || campaign.endDate === 'Invalid date' ||
         !campaign.targetImpressions
@@ -67,41 +63,56 @@ app.post('/api/save-campaign', async (req, res) => {
         return res.status(400).json('Please fill our all the required fields.')
     }
 
-    var data = {
-        name: campaign.name,
-        startDate: moment(campaign.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-        endDate: moment(campaign.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-        targetImpressions: campaign.targetImpressions
-    }
+    var result = await request({
+        headers: {
+            'x-api-key': API_KEY,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        form: {
+            id: uniqid(),
+            startDate: moment(campaign.startDate, 'DD/MM/YYYY').valueOf(),
+            endDate: moment(campaign.endDate, 'DD/MM/YYYY').valueOf(),
+            targetImpressions: campaign.targetImpressions
+        },
+        uri: 'https://esobbc6302.execute-api.eu-west-1.amazonaws.com/default/campaigns',
+        method: 'POST',
+        json: true
+    });
 
-    if (campaign.id) {
-        await knex('campaigns').where('id', campaign.id).update(data)
-
-        campaignId = campaign.id
-    } else {
-        var campaignInsert = await knex('campaigns').insert(data)
-
-        campaignId = campaignInsert[0]
-    }
-
-    return res.json({
-        id: campaignId
-    })
+    return res.json(result)
 });
 
 app.get('/api/get-campaigns', async (req, res) => {
-    var campaigns = await knex('campaigns').orderBy('id', 'desc')
+    var results = await request({
+        headers: {
+            'x-api-key': API_KEY,
+        },
+        uri: 'https://esobbc6302.execute-api.eu-west-1.amazonaws.com/default/campaigns/*',
+        method: 'GET',
+        json: true
+    });
+
+    results.sort((a, b) => {
+        return b.endDate - a.endDate
+    })
 
     return res.json({
-        campaigns: campaigns
+        campaigns: results
     })
 });
 
 app.get('/api/get-campaign/:id', async (req, res) => {
-    var campaign = await knex('campaigns').where('id', req.params.id).first()
+    var result = await request({
+        headers: {
+            'x-api-key': API_KEY,
+        },
+        uri: 'https://esobbc6302.execute-api.eu-west-1.amazonaws.com/default/campaigns/' + req.params.id,
+        method: 'GET',
+        json: true
+    });
 
     return res.json({
-        campaign: campaign
+        campaign: result
     })
 });
 
